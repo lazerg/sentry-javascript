@@ -127,6 +127,7 @@ describe('sentryAstro integration', () => {
             './dist/**/_astro/**/*.map',
             './dist/**/.prerender/**/*.map',
           ],
+          deleteSourcemapsAfterUpload: false,
         },
         _metaOptions: {
           telemetry: {
@@ -163,6 +164,7 @@ describe('sentryAstro integration', () => {
             './dist/**/_astro/**/*.map',
             './dist/**/.prerender/**/*.map',
           ],
+          deleteSourcemapsAfterUpload: false,
         },
         _metaOptions: {
           telemetry: {
@@ -207,6 +209,7 @@ describe('sentryAstro integration', () => {
             './dist/**/_astro/**/*.map',
             './dist/**/.prerender/**/*.map',
           ],
+          deleteSourcemapsAfterUpload: false,
         },
         _metaOptions: {
           telemetry: {
@@ -251,6 +254,7 @@ describe('sentryAstro integration', () => {
             './dist/**/_astro/**/*.map',
             './dist/**/.prerender/**/*.map',
           ],
+          deleteSourcemapsAfterUpload: false,
         },
         _metaOptions: {
           telemetry: {
