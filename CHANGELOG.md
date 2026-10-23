@@ -36,9 +36,9 @@ Work in this release was contributed by @faizansaiyed123, @itisrmk, @kunal649, @
 
   These integrations need the vite plugin. Without it, they record nothing, and with `debug: true` the SDK logs a warning.
 
-- **ref(deno, bun): Use a shared request handler wrapper for `Deno.serve` and `Bun.serve`**
+- **ref(deno, bun, cloudflare): Use a shared request handler wrapper for `Deno.serve`, `Bun.serve` and Cloudflare**
 
-  `Deno.serve` and `Bun.serve` now use the same request handler wrapper, which Cloudflare will also use. On both runtimes, errors in `OPTIONS` and `HEAD` requests now carry the request data, and the SDK keeps every `Set-Cookie` header of a response instead of only the last one.
+  `Deno.serve`, `Bun.serve` and Cloudflare's `wrapRequestHandler` now use the same request handler wrapper. On all three, the SDK keeps every `Set-Cookie` header of a response instead of only the last one. On Deno and Bun, errors in `OPTIONS` and `HEAD` requests now carry the request data.
 
   For Deno users:
 
@@ -51,6 +51,14 @@ Work in this release was contributed by @faizansaiyed123, @itisrmk, @kunal649, @
   - `url.domain` is now `server.address`.
   - A request to `/` gets the `route` source and the name `GET /`.
   - Spans also get `user_agent.original` and `http.request.body.size`.
+
+  For Cloudflare users:
+
+  - Request spans set `client.address` from `CF-Connecting-IP` (or another forwarding header), as on the other runtimes. This follows `dataCollection.userInfo`, which is `true` by default.
+  - Request spans get the response header attributes, and events get the `response` context.
+  - An error from the source of a streamed response is captured (unless `captureErrors` is `false`), and the span gets an error status.
+  - If you removed `httpServerIntegration`, request bodies follow `dataCollection.httpBodies`. Before, the SDK attached no body.
+  - Without `AsyncLocalStorage` (for example on Shopify Oxygen), events now also get the request URL and method.
 
 ## 11.9.0
 
