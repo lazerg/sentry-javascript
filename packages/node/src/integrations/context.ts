@@ -5,6 +5,7 @@ import { readdir, readFile } from 'node:fs';
 import * as os from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
+import { CLOUD_PLATFORM, CLOUD_PROVIDER, CLOUD_REGION } from '@sentry/conventions/attributes';
 import type {
   AppContext,
   CloudResourceContext,
@@ -524,10 +525,11 @@ function getCloudResourceContext(): CloudResourceContext | undefined {
     };
   } else if (process.env.AWS_REGION) {
     // https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html
+    const executionEnv = process.env.AWS_EXECUTION_ENV;
     return {
-      'cloud.provider': 'aws',
-      'cloud.region': process.env.AWS_REGION,
-      'cloud.platform': process.env.AWS_EXECUTION_ENV,
+      [CLOUD_PROVIDER]: 'aws',
+      [CLOUD_REGION]: process.env.AWS_REGION,
+      [CLOUD_PLATFORM]: executionEnv?.startsWith('AWS_Lambda') ? 'aws_lambda' : executionEnv,
     };
   } else if (process.env.GCP_PROJECT) {
     // https://cloud.google.com/composer/docs/how-to/managing/environment-variables#reserved_variables
