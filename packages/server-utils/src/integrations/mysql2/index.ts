@@ -18,6 +18,7 @@ import { mysql2ModuleNames } from '../../orchestrion/config/mysql2';
 import { invokeOrchestrionInstrumentation } from '../../orchestrion/instrumentation';
 import {
   DB_NAMESPACE,
+  DB_OPERATION_NAME,
   DB_QUERY_SUMMARY,
   DB_QUERY_TEXT,
   DB_SYSTEM_NAME,
@@ -79,7 +80,7 @@ function subscribeQueryChannel(channelName: ChannelName): void {
     data => {
       const statement = getQueryText(data.arguments);
       const connectionAttributes = getConnectionAttributes(data.self?.config);
-      const { queryText, querySummary } = sanitizeSqlQueryWithSummary(statement, 'mysql');
+      const { queryText, querySummary, operationName } = sanitizeSqlQueryWithSummary(statement, 'mysql');
 
       const client = getClient();
       const name =
@@ -96,6 +97,7 @@ function subscribeQueryChannel(channelName: ChannelName): void {
           [DB_SYSTEM_NAME]: DB_SYSTEM_VALUE_MYSQL,
           [DB_QUERY_TEXT]: queryText || undefined,
           [DB_QUERY_SUMMARY]: querySummary,
+          [DB_OPERATION_NAME]: operationName,
           ...connectionAttributes,
         },
       });

@@ -1,6 +1,7 @@
 import * as diagnosticsChannel from '../utils/diagnosticsChannel';
 import {
   DB_NAMESPACE,
+  DB_OPERATION_NAME,
   DB_QUERY_SUMMARY,
   DB_QUERY_TEXT,
   DB_SYSTEM_NAME,
@@ -84,7 +85,7 @@ function instrumentMysql(): void {
       // handler with the caller's context lost. `deferSpanEnd` replays this scope onto the emitter.
       data._sentryCallerScope = getCurrentScope();
 
-      const { queryText, querySummary } = sanitizeSqlQueryWithSummary(sql, 'mysql');
+      const { queryText, querySummary, operationName } = sanitizeSqlQueryWithSummary(sql, 'mysql');
 
       const client = getClient();
       const name =
@@ -104,6 +105,7 @@ function instrumentMysql(): void {
           ...(user ? { [DB_USER]: user } : {}),
           ...(queryText ? { [DB_QUERY_TEXT]: queryText } : {}),
           [DB_QUERY_SUMMARY]: querySummary,
+          [DB_OPERATION_NAME]: operationName,
           [SERVER_ADDRESS]: host,
           [SERVER_PORT]: portIsNumber ? portNumber : undefined,
         },
